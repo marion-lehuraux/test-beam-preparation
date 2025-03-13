@@ -35,8 +35,6 @@ else:
     # Load data from database
     df = load_data(conn)
 
-df['submission_date'] = pd.to_datetime(df["submission_date"])
-
 # At glance 
 st.write("## A glance at the high priority tasks ")
 
@@ -47,23 +45,11 @@ st.write("## Browse tasks ")
 min_value_duration = df['duration'].min()
 max_value_duration = df['duration'].max()
 
-min_value_submission = df['submission_date'].min().to_pydatetime()
-max_value_submission = df['submission_date'].max().to_pydatetime()
-
 from_dur, to_dur = st.slider(
     'Task duration',
     min_value=min_value_duration,
     max_value=max_value_duration+1,
     value=[min_value_duration, max_value_duration])
-
-from_submitted, to_submitted = st.slider(
-    'Task submission date',
-    min_value=min_value_submission,
-    max_value=max_value_submission,
-    value=[min_value_submission, max_value_submission],
-    format="DD.MM.YYYY",
-    )
-
 
 contacts = df['contact_person'].unique()
 if not len(contacts):
@@ -102,8 +88,6 @@ filtered_df = df[
     & (df['sub_system'].isin(selected_systems))
     & (df['duration'] <= to_dur)
     & (from_dur <= df['duration'])
-    & (df['submission_date'] <= to_submitted)
-    & (from_submitted <= df['submission_date'])
 ]
 
 st.dataframe(filtered_df)
